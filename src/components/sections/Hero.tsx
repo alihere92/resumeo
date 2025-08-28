@@ -14,7 +14,7 @@ const Hero = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent border border-primary/20 rounded-full text-sm font-medium text-accent-foreground mb-8">
             <Sparkles className="h-4 w-4" />
-            AI-Powered Resume Builder
+            Professional Resume Builder
           </div>
 
           {/* Main Heading */}
@@ -34,7 +34,7 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link to="/signup">
+            <Link to="/login">
               <Button 
                 size="lg" 
                 className="bg-gradient-hero hover:opacity-90 transition-opacity px-8 py-6 text-lg font-semibold"

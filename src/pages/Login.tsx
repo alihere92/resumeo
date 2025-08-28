@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +15,15 @@ const Login = () => {
     password: ""
   });
 
-  const { toast } = useToast();
+  const { signIn, signInWithGoogle, signInWithFacebook, user } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -28,14 +36,21 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Success!",
-        description: "You have been logged in successfully.",
-      });
-    }, 1500);
+    const { error } = await signIn(formData.email, formData.password);
+    
+    setIsLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    await signInWithGoogle();
+    setIsLoading(false);
+  };
+
+  const handleFacebookSignIn = async () => {
+    setIsLoading(true);
+    await signInWithFacebook();
+    setIsLoading(false);
   };
 
   return (
@@ -136,7 +151,12 @@ const Login = () => {
 
             {/* Social Login */}
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-12">
+              <Button 
+                variant="outline" 
+                className="h-12" 
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
+              >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -157,7 +177,12 @@ const Login = () => {
                 </svg>
                 Google
               </Button>
-              <Button variant="outline" className="h-12">
+              <Button 
+                variant="outline" 
+                className="h-12"
+                onClick={handleFacebookSignIn}
+                disabled={isLoading}
+              >
                 <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>

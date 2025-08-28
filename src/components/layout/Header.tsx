@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, FileText } from "lucide-react";
+import { Menu, X, FileText, User, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -42,16 +50,42 @@ const Header = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button size="sm" className="bg-gradient-hero hover:opacity-90 transition-opacity">
-                Get Started
-              </Button>
-            </Link>
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Link to="/dashboard">
+                  <Button variant="ghost" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>Account</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={signOut}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button size="sm" className="bg-gradient-hero hover:opacity-90 transition-opacity">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,16 +115,37 @@ const Header = () => {
               </a>
             ))}
             <div className="flex flex-col space-y-2 pt-4">
-              <Link to="/login">
-                <Button variant="ghost" size="sm" className="w-full">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button size="sm" className="w-full bg-gradient-hero hover:opacity-90 transition-opacity">
-                  Get Started
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/dashboard">
+                    <Button variant="ghost" size="sm" className="w-full">
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full" 
+                    onClick={signOut}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="ghost" size="sm" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button size="sm" className="w-full bg-gradient-hero hover:opacity-90 transition-opacity">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
