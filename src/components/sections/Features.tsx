@@ -90,7 +90,21 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-8 bg-card border border-border rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group relative p-8 bg-card border border-border rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              onClick={() => {
+                const featureRoutes: { [key: string]: string } = {
+                  "AI-Powered Content": "/features/ai-content",
+                  "Modern Templates": "/features/templates", 
+                  "Instant PDF Export": "/features/pdf-export",
+                  "Real-time Preview": "/features/preview",
+                  "ATS Optimized": "/features/ats-optimization",
+                  "Multiple Formats": "/features/formats",
+                  "Cover Letters": "/features/cover-letters",
+                  "Job Matching": "/features/job-matching",
+                  "Smart Formatting": "/features/smart-formatting"
+                };
+                window.location.href = featureRoutes[feature.title];
+              }}
             >
               {/* Icon */}
               <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg bg-background mb-6 ${feature.color}`}>

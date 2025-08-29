@@ -80,10 +80,12 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-foreground">My Resumes</h1>
               <p className="text-muted-foreground">Manage and create your professional resumes</p>
             </div>
-            <Button className="bg-gradient-hero hover:opacity-90 transition-opacity">
-              <Plus className="mr-2 h-4 w-4" />
-              Create New Resume
-            </Button>
+            <div className="flex gap-2">
+              <Button className="bg-gradient-hero hover:opacity-90 transition-opacity">
+                <Plus className="mr-2 h-4 w-4" />
+                Create New Resume
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -250,6 +252,21 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Logout Button */}
+        <div className="flex justify-center mt-8">
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              // This will be connected to the actual signOut function
+              localStorage.clear();
+              window.location.href = '/signin';
+            }}
+            className="w-48"
+          >
+            Logout
+          </Button>
         </div>
 
         {/* Empty State (if no resumes) */}

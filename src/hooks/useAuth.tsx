@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (event === 'SIGNED_IN' && session?.user) {
           // Redirect to dashboard on successful sign in
           setTimeout(() => {
-            navigate('/dashboard');
+            navigate('/home');
           }, 0);
         }
       }

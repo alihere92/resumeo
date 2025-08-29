@@ -34,7 +34,7 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link to="/login">
+            <Link to="/signin">
               <Button 
                 size="lg" 
                 className="bg-gradient-hero hover:opacity-90 transition-opacity px-8 py-6 text-lg font-semibold"

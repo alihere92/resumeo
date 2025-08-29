@@ -13,6 +13,15 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
+import AIContentPage from "./pages/features/AIContentPage";
+import TemplatesPage from "./pages/features/TemplatesPage";
+import PDFExportPage from "./pages/features/PDFExportPage";
+import PreviewPage from "./pages/features/PreviewPage";
+import ATSOptimizationPage from "./pages/features/ATSOptimizationPage";
+import FormatsPage from "./pages/features/FormatsPage";
+import CoverLettersPage from "./pages/features/CoverLettersPage";
+import JobMatchingPage from "./pages/features/JobMatchingPage";
+import SmartFormattingPage from "./pages/features/SmartFormattingPage";
 
 const queryClient = new QueryClient();
 
@@ -25,12 +34,12 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/signin" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route 
-              path="/dashboard" 
+              path="/home" 
               element={
                 <ProtectedRoute>
                   <Dashboard />
@@ -42,6 +51,78 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ResumeBuilder />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/ai-content" 
+              element={
+                <ProtectedRoute>
+                  <AIContentPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/templates" 
+              element={
+                <ProtectedRoute>
+                  <TemplatesPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/pdf-export" 
+              element={
+                <ProtectedRoute>
+                  <PDFExportPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/preview" 
+              element={
+                <ProtectedRoute>
+                  <PreviewPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/ats-optimization" 
+              element={
+                <ProtectedRoute>
+                  <ATSOptimizationPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/formats" 
+              element={
+                <ProtectedRoute>
+                  <FormatsPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/cover-letters" 
+              element={
+                <ProtectedRoute>
+                  <CoverLettersPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/job-matching" 
+              element={
+                <ProtectedRoute>
+                  <JobMatchingPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/features/smart-formatting" 
+              element={
+                <ProtectedRoute>
+                  <SmartFormattingPage />
                 </ProtectedRoute>
               } 
             />
