@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,11 +55,11 @@ const ResumeBuilder = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link 
-                to="/dashboard" 
+                to="/home" 
                 className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Dashboard
+                Back to Home
               </Link>
               <Separator orientation="vertical" className="h-6" />
               <div>

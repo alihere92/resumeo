@@ -8,8 +8,9 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
 import ResumeBuilder from "./pages/ResumeBuilder";
+import ForgotPassword from "./pages/ForgotPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
@@ -36,18 +37,27 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/signin" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route 
               path="/home" 
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Home />
                 </ProtectedRoute>
               } 
             />
             <Route 
               path="/resume-builder" 
+              element={
+                <ProtectedRoute>
+                  <ResumeBuilder />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/editor/:id" 
               element={
                 <ProtectedRoute>
                   <ResumeBuilder />
