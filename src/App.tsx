@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,26 +6,39 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+
+// Critical pages loaded immediately
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home from "./pages/Home";
-import ResumeBuilder from "./pages/ResumeBuilder";
-import ForgotPassword from "./pages/ForgotPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
-import AIContentPage from "./pages/features/AIContentPage";
-import TemplatesPage from "./pages/features/TemplatesPage";
-import PDFExportPage from "./pages/features/PDFExportPage";
-import PreviewPage from "./pages/features/PreviewPage";
-import ATSOptimizationPage from "./pages/features/ATSOptimizationPage";
-import FormatsPage from "./pages/features/FormatsPage";
-import CoverLettersPage from "./pages/features/CoverLettersPage";
-import JobMatchingPage from "./pages/features/JobMatchingPage";
-import SmartFormattingPage from "./pages/features/SmartFormattingPage";
+
+// Lazy load authenticated and feature pages
+const Home = lazy(() => import("./pages/Home"));
+const ResumeBuilder = lazy(() => import("./pages/ResumeBuilder"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+
+// Lazy load feature pages
+const AIContentPage = lazy(() => import("./pages/features/AIContentPage"));
+const TemplatesPage = lazy(() => import("./pages/features/TemplatesPage"));
+const PDFExportPage = lazy(() => import("./pages/features/PDFExportPage"));
+const PreviewPage = lazy(() => import("./pages/features/PreviewPage"));
+const ATSOptimizationPage = lazy(() => import("./pages/features/ATSOptimizationPage"));
+const FormatsPage = lazy(() => import("./pages/features/FormatsPage"));
+const CoverLettersPage = lazy(() => import("./pages/features/CoverLettersPage"));
+const JobMatchingPage = lazy(() => import("./pages/features/JobMatchingPage"));
+const SmartFormattingPage = lazy(() => import("./pages/features/SmartFormattingPage"));
 
 const queryClient = new QueryClient();
+
+// Loading component for lazy routes
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -37,14 +51,20 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/signin" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/forgot-password" element={
+              <Suspense fallback={<LoadingFallback />}>
+                <ForgotPassword />
+              </Suspense>
+            } />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route 
               path="/home" 
               element={
                 <ProtectedRoute>
-                  <Home />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <Home />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -52,7 +72,9 @@ const App = () => (
               path="/resume-builder" 
               element={
                 <ProtectedRoute>
-                  <ResumeBuilder />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ResumeBuilder />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -60,7 +82,9 @@ const App = () => (
               path="/editor/:id" 
               element={
                 <ProtectedRoute>
-                  <ResumeBuilder />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ResumeBuilder />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -68,7 +92,9 @@ const App = () => (
               path="/features/ai-content" 
               element={
                 <ProtectedRoute>
-                  <AIContentPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <AIContentPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -76,7 +102,9 @@ const App = () => (
               path="/features/templates" 
               element={
                 <ProtectedRoute>
-                  <TemplatesPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <TemplatesPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -84,7 +112,9 @@ const App = () => (
               path="/features/pdf-export" 
               element={
                 <ProtectedRoute>
-                  <PDFExportPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <PDFExportPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -92,7 +122,9 @@ const App = () => (
               path="/features/preview" 
               element={
                 <ProtectedRoute>
-                  <PreviewPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <PreviewPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -100,7 +132,9 @@ const App = () => (
               path="/features/ats-optimization" 
               element={
                 <ProtectedRoute>
-                  <ATSOptimizationPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <ATSOptimizationPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -108,7 +142,9 @@ const App = () => (
               path="/features/formats" 
               element={
                 <ProtectedRoute>
-                  <FormatsPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <FormatsPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -116,7 +152,9 @@ const App = () => (
               path="/features/cover-letters" 
               element={
                 <ProtectedRoute>
-                  <CoverLettersPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <CoverLettersPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -124,7 +162,9 @@ const App = () => (
               path="/features/job-matching" 
               element={
                 <ProtectedRoute>
-                  <JobMatchingPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <JobMatchingPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
@@ -132,7 +172,9 @@ const App = () => (
               path="/features/smart-formatting" 
               element={
                 <ProtectedRoute>
-                  <SmartFormattingPage />
+                  <Suspense fallback={<LoadingFallback />}>
+                    <SmartFormattingPage />
+                  </Suspense>
                 </ProtectedRoute>
               } 
             />
