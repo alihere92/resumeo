@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 const Home = lazy(() => import("./pages/Home"));
 const ResumeBuilder = lazy(() => import("./pages/ResumeBuilder"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 // Lazy load feature pages
 const AIContentPage = lazy(() => import("./pages/features/AIContentPage"));
@@ -50,10 +51,16 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/signin" element={<Login />} />
+            <Route path="/sign-in" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={
               <Suspense fallback={<LoadingFallback />}>
                 <ForgotPassword />
+              </Suspense>
+            } />
+            <Route path="/reset-password" element={
+              <Suspense fallback={<LoadingFallback />}>
+                <ResetPassword />
               </Suspense>
             } />
             <Route path="/terms" element={<Terms />} />

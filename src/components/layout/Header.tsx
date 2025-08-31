@@ -52,7 +52,7 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
-                <Link to="/dashboard">
+                <Link to="/home">
                   <Button variant="ghost" size="sm">
                     Dashboard
                   </Button>
@@ -74,7 +74,7 @@ const Header = () => {
               </div>
             ) : (
               <>
-                <Link to="/login">
+                <Link to="/sign-in">
                   <Button variant="ghost" size="sm">
                     Sign In
                   </Button>
@@ -117,7 +117,7 @@ const Header = () => {
             <div className="flex flex-col space-y-2 pt-4">
               {user ? (
                 <>
-                  <Link to="/dashboard">
+                  <Link to="/home">
                     <Button variant="ghost" size="sm" className="w-full">
                       Dashboard
                     </Button>
@@ -134,7 +134,7 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/login">
+                  <Link to="/sign-in">
                     <Button variant="ghost" size="sm" className="w-full">
                       Sign In
                     </Button>

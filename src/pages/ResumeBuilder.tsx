@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,10 +19,26 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useResumes, Resume } from "@/hooks/useResumes";
+import { useAuth } from "@/hooks/useAuth";
 
 const ResumeBuilder = () => {
   const { toast } = useToast();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { resumes, updateResume, createResume, incrementDownloads } = useResumes();
+  
   const [activeSection, setActiveSection] = useState("personal");
+  const [currentResume, setCurrentResume] = useState<Resume | null>(null);
+  const [resumeData, setResumeData] = useState({
+    personal: { firstName: "", lastName: "", email: "", phone: "", location: "", website: "" },
+    summary: "",
+    experience: [],
+    education: [],
+    skills: [] as string[],
+    certifications: []
+  });
   
   const sections = [
     { id: "personal", name: "Personal Info", icon: "👤" },
@@ -33,11 +49,78 @@ const ResumeBuilder = () => {
     { id: "certifications", name: "Certifications", icon: "🏆" },
   ];
 
-  const handleSave = () => {
-    toast({
-      title: "Resume Saved",
-      description: "Your resume has been saved successfully.",
+  // Auto-save functionality
+  const autoSave = useCallback(async () => {
+    if (!currentResume) return;
+    
+    await updateResume(currentResume.id, {
+      content: { sections: resumeData },
+      updated_at: new Date().toISOString()
     });
+  }, [currentResume, resumeData, updateResume]);
+
+  // Auto-save on data change with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentResume) {
+        autoSave();
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timer);
+  }, [resumeData, autoSave, currentResume]);
+
+  // Load resume data on mount
+  useEffect(() => {
+    if (id) {
+      const resume = resumes.find(r => r.id === id);
+      if (resume) {
+        setCurrentResume(resume);
+        if (resume.content?.sections) {
+          setResumeData(resume.content.sections);
+        }
+      }
+    } else if (user) {
+      // Create new resume if no ID
+      const createNewResume = async () => {
+        const newResume = await createResume("Untitled Resume");
+        if (newResume) {
+          setCurrentResume(newResume);
+          navigate(`/editor/${newResume.id}`, { replace: true });
+        }
+      };
+      createNewResume();
+    }
+  }, [id, resumes, user, createResume, navigate]);
+
+  const handleSave = async () => {
+    if (currentResume) {
+      await autoSave();
+      toast({
+        title: "Resume Saved",
+        description: "Your resume has been saved successfully.",
+      });
+    }
+  };
+
+  const handleDownload = async () => {
+    if (currentResume) {
+      await incrementDownloads(currentResume.id);
+      // Simulate PDF generation
+      toast({
+        title: "Download Started",
+        description: "Your resume PDF is being generated and will download shortly.",
+      });
+      
+      // Create a simple PDF simulation
+      const element = document.createElement('a');
+      const file = new Blob(['Resume PDF content would be here'], {type: 'application/pdf'});
+      element.href = URL.createObjectURL(file);
+      element.download = `${currentResume.title || 'resume'}.pdf`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
   };
 
   const handleAISuggestion = () => {
@@ -45,6 +128,15 @@ const ResumeBuilder = () => {
       title: "AI Suggestion Generated",
       description: "We've added some suggestions to improve your resume.",
     });
+  };
+
+  const updateField = (section: string, field: string, value: any) => {
+    setResumeData(prev => ({
+      ...prev,
+      [section]: typeof prev[section] === 'object' && !Array.isArray(prev[section])
+        ? { ...prev[section], [field]: value }
+        : value
+    }));
   };
 
   return (
@@ -63,7 +155,7 @@ const ResumeBuilder = () => {
               </Link>
               <Separator orientation="vertical" className="h-6" />
               <div>
-                <h1 className="text-xl font-semibold">Software Engineer Resume</h1>
+                <h1 className="text-xl font-semibold">{currentResume?.title || "Loading..."}</h1>
                 <p className="text-sm text-muted-foreground">Modern Professional Template</p>
               </div>
             </div>
@@ -77,7 +169,7 @@ const ResumeBuilder = () => {
                 <Save className="mr-2 h-4 w-4" />
                 Save
               </Button>
-              <Button size="sm" className="bg-gradient-hero hover:opacity-90">
+              <Button size="sm" className="bg-gradient-hero hover:opacity-90" onClick={handleDownload}>
                 <Download className="mr-2 h-4 w-4" />
                 Download PDF
               </Button>
@@ -87,9 +179,9 @@ const ResumeBuilder = () => {
       </header>
 
       <div className="container mx-auto px-4 lg:px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Sidebar - Section Navigation */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-3">
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle className="text-lg">Resume Sections</CardTitle>
@@ -106,7 +198,7 @@ const ResumeBuilder = () => {
                     }`}
                   >
                     <span className="text-lg">{section.icon}</span>
-                    <span className="font-medium">{section.name}</span>
+                    <span className="font-medium text-sm">{section.name}</span>
                   </button>
                 ))}
                 
@@ -126,7 +218,7 @@ const ResumeBuilder = () => {
           </div>
 
           {/* Main Content - Form Builder */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-4">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -143,46 +235,79 @@ const ResumeBuilder = () => {
                 {/* Personal Info Form */}
                 {activeSection === "personal" && (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="John" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Doe" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john.doe@example.com" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" placeholder="+1 (555) 123-4567" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="location">Location</Label>
-                      <Input id="location" placeholder="San Francisco, CA" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="website">Website/Portfolio</Label>
-                      <Input id="website" placeholder="https://johndoe.dev" />
-                    </div>
+                     <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-2">
+                         <Label htmlFor="firstName">First Name</Label>
+                         <Input 
+                           id="firstName" 
+                           placeholder="John"
+                           value={resumeData.personal.firstName}
+                           onChange={(e) => updateField('personal', 'firstName', e.target.value)}
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <Label htmlFor="lastName">Last Name</Label>
+                         <Input 
+                           id="lastName" 
+                           placeholder="Doe"
+                           value={resumeData.personal.lastName}
+                           onChange={(e) => updateField('personal', 'lastName', e.target.value)}
+                         />
+                       </div>
+                     </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="email">Email</Label>
+                       <Input 
+                         id="email" 
+                         type="email" 
+                         placeholder="john.doe@example.com"
+                         value={resumeData.personal.email}
+                         onChange={(e) => updateField('personal', 'email', e.target.value)}
+                       />
+                     </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="phone">Phone</Label>
+                       <Input 
+                         id="phone" 
+                         placeholder="+1 (555) 123-4567"
+                         value={resumeData.personal.phone}
+                         onChange={(e) => updateField('personal', 'phone', e.target.value)}
+                       />
+                     </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="location">Location</Label>
+                       <Input 
+                         id="location" 
+                         placeholder="San Francisco, CA"
+                         value={resumeData.personal.location}
+                         onChange={(e) => updateField('personal', 'location', e.target.value)}
+                       />
+                     </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="website">Website/Portfolio</Label>
+                       <Input 
+                         id="website" 
+                         placeholder="https://johndoe.dev"
+                         value={resumeData.personal.website}
+                         onChange={(e) => updateField('personal', 'website', e.target.value)}
+                       />
+                     </div>
                   </div>
                 )}
 
                 {/* Professional Summary */}
                 {activeSection === "summary" && (
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="summary">Professional Summary</Label>
-                      <Textarea 
-                        id="summary" 
-                        placeholder="Write a compelling summary of your professional background..."
-                        className="min-h-32"
-                      />
-                    </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="summary">Professional Summary</Label>
+                       <Textarea 
+                         id="summary" 
+                         placeholder="Write a compelling summary of your professional background..."
+                         className="min-h-32"
+                         value={resumeData.summary}
+                         onChange={(e) => updateField('summary', '', e.target.value)}
+                       />
+                     </div>
                     <Button variant="outline" size="sm" onClick={handleAISuggestion}>
                       <Sparkles className="mr-2 h-4 w-4" />
                       Generate AI Summary
@@ -292,7 +417,7 @@ const ResumeBuilder = () => {
           </div>
 
           {/* Live Preview */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-5">
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle className="text-lg">Live Preview</CardTitle>
@@ -300,21 +425,25 @@ const ResumeBuilder = () => {
               <CardContent>
                 <div className="bg-white border border-border rounded-lg p-4 shadow-sm">
                   <div className="space-y-3 text-sm">
-                    <div className="text-center">
-                      <h3 className="font-bold text-base">John Doe</h3>
-                      <p className="text-muted-foreground">Senior Software Engineer</p>
-                      <p className="text-xs">john.doe@example.com • +1 (555) 123-4567</p>
-                      <p className="text-xs">San Francisco, CA</p>
-                    </div>
+                     <div className="text-center">
+                       <h3 className="font-bold text-base">
+                         {resumeData.personal.firstName} {resumeData.personal.lastName} {!resumeData.personal.firstName && !resumeData.personal.lastName && "Your Name"}
+                       </h3>
+                       <p className="text-muted-foreground">Software Engineer</p>
+                       <p className="text-xs">
+                         {resumeData.personal.email || "your.email@example.com"} • {resumeData.personal.phone || "+1 (555) 123-4567"}
+                       </p>
+                       <p className="text-xs">{resumeData.personal.location || "Your Location"}</p>
+                     </div>
                     
                     <Separator />
                     
-                    <div>
-                      <h4 className="font-semibold text-xs uppercase tracking-wide mb-1">Professional Summary</h4>
-                      <p className="text-xs leading-relaxed text-muted-foreground">
-                        Experienced software engineer with 5+ years of expertise in full-stack development...
-                      </p>
-                    </div>
+                     <div>
+                       <h4 className="font-semibold text-xs uppercase tracking-wide mb-1">Professional Summary</h4>
+                       <p className="text-xs leading-relaxed text-muted-foreground">
+                         {resumeData.summary || "Write a compelling summary of your professional background..."}
+                       </p>
+                     </div>
                     
                     <div>
                       <h4 className="font-semibold text-xs uppercase tracking-wide mb-2">Experience</h4>
@@ -344,10 +473,10 @@ const ResumeBuilder = () => {
                     <Eye className="mr-2 h-4 w-4" />
                     Full Preview
                   </Button>
-                  <Button size="sm" className="w-full bg-gradient-hero hover:opacity-90">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download
-                  </Button>
+                   <Button size="sm" className="w-full bg-gradient-hero hover:opacity-90" onClick={handleDownload}>
+                     <Download className="mr-2 h-4 w-4" />
+                     Download
+                   </Button>
                 </div>
               </CardContent>
             </Card>

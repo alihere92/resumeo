@@ -11,7 +11,8 @@ import {
   Copy,
   Eye,
   Calendar,
-  MoreHorizontal
+  MoreHorizontal,
+  LogOut
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -293,13 +294,15 @@ const Home = () => {
           </div>
         )}
 
-        {/* Logout Button */}
-        <div className="flex justify-center mt-12">
+        {/* Logout Button - Bottom Left */}
+        <div className="fixed bottom-4 left-4 z-10">
           <Button 
             variant="outline" 
             onClick={handleLogout}
-            className="w-40"
+            className="flex items-center gap-2 shadow-lg border-border/50 bg-background/80 backdrop-blur-sm hover:bg-background"
+            size="sm"
           >
+            <LogOut className="h-4 w-4" />
             Logout
           </Button>
         </div>
