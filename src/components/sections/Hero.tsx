@@ -1,88 +1,85 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Award, Zap } from "lucide-react";
+import { ArrowRight, Star, Users, CheckCircle } from "lucide-react";
+import heroImage from "@/assets/hero-resume-image.jpg";
 
 const Hero = () => {
   return (
-    <section className="relative py-20 lg:py-32 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-subtle opacity-50" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-light rounded-full blur-3xl opacity-20" />
-      
-      <div className="container relative mx-auto px-4 lg:px-6">
-        <div className="text-center max-w-4xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent border border-primary/20 rounded-full text-sm font-medium text-accent-foreground mb-8">
-            <Sparkles className="h-4 w-4" />
-            Professional Resume Builder
-          </div>
+    <section className="relative py-16 lg:py-24 bg-background">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left Content */}
+          <div className="max-w-2xl">
+            {/* Main Heading */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-foreground">
+              Build ATS-Ready{" "}
+              <span className="text-primary">
+                Resumes
+              </span>{" "}
+              That Get You Hired
+            </h1>
 
-          {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            Create Your Perfect{" "}
-            <span className="bg-gradient-hero bg-clip-text text-transparent">
-              Resume
-            </span>{" "}
-            in Minutes
-          </h1>
+            {/* Subheading */}
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
+              Create professional, keyword-optimized resumes with AI-powered insights. Beat ATS systems and land more interviews with our advanced resume builder.
+            </p>
 
-          {/* Subheading */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Build professional, ATS-optimized resumes with our AI-powered platform. 
-            Choose from modern templates, get smart suggestions, and land your dream job.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link to="/signin">
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <Link to="/sign-in">
+                <Button 
+                  size="lg" 
+                  className="bg-primary hover:bg-primary-hover px-8 py-6 text-lg font-semibold"
+                >
+                  Start Building Free
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
               <Button 
+                variant="outline" 
                 size="lg" 
-                className="bg-gradient-hero hover:opacity-90 transition-opacity px-8 py-6 text-lg font-semibold"
+                className="px-8 py-6 text-lg font-semibold"
               >
-                Start Building Free
-                <ArrowRight className="ml-2 h-5 w-5" />
+                View Templates
               </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="px-8 py-6 text-lg font-semibold border-2"
-            >
-              View Templates
-            </Button>
+            </div>
+
+            {/* Social Proof */}
+            <div className="flex flex-wrap items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  <Star className="h-4 w-4 text-warning fill-current" />
+                  <Star className="h-4 w-4 text-warning fill-current" />
+                  <Star className="h-4 w-4 text-warning fill-current" />
+                  <Star className="h-4 w-4 text-warning fill-current" />
+                  <Star className="h-4 w-4 text-warning fill-current" />
+                </div>
+                <span className="text-foreground font-medium">4.9/5 Rating</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                <span className="text-foreground font-medium">50K+ Users</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-success" />
+                <span className="text-foreground font-medium">ATS Optimized</span>
+              </div>
+            </div>
           </div>
 
-          {/* Social Proof */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-success/10 rounded-lg">
-                <Award className="h-6 w-6 text-success" />
-              </div>
-              <div className="text-left">
-                <div className="text-2xl font-bold text-foreground">500K+</div>
-                <div className="text-sm text-muted-foreground">Resumes Created</div>
-              </div>
+          {/* Right Content - Hero Image */}
+          <div className="relative">
+            <div className="relative z-10">
+              <img 
+                src={heroImage} 
+                alt="Professional resume builder interface showing modern resume templates"
+                className="w-full h-auto rounded-2xl shadow-xl"
+              />
             </div>
-            
-            <div className="flex items-center justify-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-lg">
-                <Zap className="h-6 w-6 text-primary" />
-              </div>
-              <div className="text-left">
-                <div className="text-2xl font-bold text-foreground">98%</div>
-                <div className="text-sm text-muted-foreground">Success Rate</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-warning/10 rounded-lg">
-                <Sparkles className="h-6 w-6 text-warning" />
-              </div>
-              <div className="text-left">
-                <div className="text-2xl font-bold text-foreground">4.9/5</div>
-                <div className="text-sm text-muted-foreground">User Rating</div>
-              </div>
-            </div>
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl transform rotate-3 scale-105 -z-10" />
           </div>
         </div>
       </div>
