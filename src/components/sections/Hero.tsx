@@ -40,7 +40,9 @@ const Hero = () => {
                 size="lg" 
                 className="px-8 py-6 text-lg font-semibold"
               >
-                View Templates
+                <Link to="/features/templates">
+                  View Templates
+                </Link>
               </Button>
             </div>
 

@@ -1,91 +1,113 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Palette, ArrowLeft, Eye, Download, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { 
+  Palette, 
+  ArrowLeft, 
+  Eye, 
+  Download, 
+  Star, 
+  Shield, 
+  Smartphone
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useResumes } from "@/hooks/useResumes";
+import modernProfessional from "@/assets/template-modern-professional.jpg";
+import creativeDesigner from "@/assets/template-creative-designer.jpg";
+import executiveProfessional from "@/assets/template-executive-professional.jpg";
+import minimalClean from "@/assets/template-minimal-clean.jpg";
+
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  color: string;
+  bgColor: string;
+  popular: boolean;
+  atsOptimized: boolean;
+  preview: string;
+}
 
 const TemplatesPage = () => {
   const { toast } = useToast();
+  const { createResume } = useResumes();
+  const navigate = useNavigate();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
-  const templates = [
+  const templates: Template[] = [
     {
       id: "modern-professional",
       name: "Modern Professional",
-      description: "Clean, contemporary design perfect for tech and business roles",
-      category: "Professional",
-      color: "blue",
+      description: "Clean and modern design perfect for tech and business professionals",
+      category: "Modern",
+      color: "border-primary",
+      bgColor: "bg-primary/5",
       popular: true,
       atsOptimized: true,
-      preview: "/placeholder.svg"
+      preview: modernProfessional
     },
     {
-      id: "creative-blue",
-      name: "Creative Blue",
-      description: "Eye-catching design with blue accents for creative professionals",
-      category: "Creative",
-      color: "blue",
+      id: "creative-designer",
+      name: "Creative Designer",
+      description: "Eye-catching design for creative professionals and designers",
+      category: "Creative", 
+      color: "border-pink-400",
+      bgColor: "bg-pink-50",
       popular: false,
       atsOptimized: true,
-      preview: "/placeholder.svg"
+      preview: creativeDesigner
+    },
+    {
+      id: "executive-professional",
+      name: "Executive Professional",
+      description: "Traditional and sophisticated design for executive positions",
+      category: "Professional",
+      color: "border-gray-400",
+      bgColor: "bg-gray-50",
+      popular: false,
+      atsOptimized: true,
+      preview: executiveProfessional
     },
     {
       id: "minimal-clean",
       name: "Minimal Clean",
-      description: "Simple, elegant design focusing on content clarity",
+      description: "Simple and clean layout that focuses on content",
       category: "Minimal",
-      color: "gray",
+      color: "border-green-400",
+      bgColor: "bg-green-50",
       popular: true,
       atsOptimized: true,
-      preview: "/placeholder.svg"
-    },
-    {
-      id: "executive-premium",
-      name: "Executive Premium",
-      description: "Sophisticated layout for senior-level positions",
-      category: "Executive",
-      color: "black",
-      popular: false,
-      atsOptimized: true,
-      preview: "/placeholder.svg"
-    },
-    {
-      id: "tech-innovator",
-      name: "Tech Innovator",
-      description: "Modern template tailored for software engineers and tech professionals",
-      category: "Technology",
-      color: "green",
-      popular: true,
-      atsOptimized: true,
-      preview: "/placeholder.svg"
-    },
-    {
-      id: "healthcare-pro",
-      name: "Healthcare Professional",
-      description: "Professional template designed for healthcare workers",
-      category: "Healthcare",
-      color: "red",
-      popular: false,
-      atsOptimized: true,
-      preview: "/placeholder.svg"
+      preview: minimalClean
     }
   ];
 
-  const categories = ["All", "Professional", "Creative", "Minimal", "Executive", "Technology", "Healthcare"];
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const categories = ["All Templates", "Modern", "Creative", "Professional", "Minimal"];
+  const [selectedCategory, setSelectedCategory] = useState("All Templates");
 
-  const filteredTemplates = selectedCategory === "All" 
+  const filteredTemplates = selectedCategory === "All Templates" 
     ? templates 
     : templates.filter(template => template.category === selectedCategory);
 
-  const handleUseTemplate = (templateId: string, templateName: string) => {
-    setSelectedTemplate(templateId);
-    toast({
-      title: "Template Selected!",
-      description: `"${templateName}" template is now ready to use.`,
-    });
+  const handleUseTemplate = async (templateId: string, templateName: string) => {
+    try {
+      setSelectedTemplate(templateId);
+      const newResume = await createResume(`Resume - ${templateName}`, templateName);
+      toast({
+        title: "Template Selected!",
+        description: `"${templateName}" template is ready to use.`,
+      });
+      // Navigate to resume builder with the new resume
+      navigate(`/resume-builder?template=${templateId}`);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create resume with template.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handlePreview = (templateName: string) => {
@@ -96,40 +118,45 @@ const TemplatesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur">
-        <div className="container mx-auto px-4 lg:px-6 py-4">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-background">
+      {/* Header with gradient background */}
+      <header className="bg-gradient-to-r from-primary via-primary to-primary-hover text-white py-16">
+        <div className="container mx-auto px-4 lg:px-6">
+          {/* Back button */}
+          <div className="mb-8">
             <Link to="/home">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Dashboard
               </Button>
             </Link>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-success/10">
-                <Palette className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Resume Templates</h1>
-                <p className="text-muted-foreground">Choose from our professionally designed, ATS-optimized templates</p>
-              </div>
-            </div>
+          </div>
+          
+          <div className="text-center max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Professional Resume Templates
+            </h1>
+            <p className="text-xl text-white/90 leading-relaxed">
+              Choose from our collection of ATS-friendly, modern resume templates designed to help you stand out
+            </p>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 lg:px-6 py-8">
+      <div className="container mx-auto px-4 lg:px-6 py-12">
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
           {categories.map((category) => (
             <Button
               key={category}
               variant={selectedCategory === category ? "default" : "outline"}
-              size="sm"
+              size="lg"
               onClick={() => setSelectedCategory(category)}
-              className={selectedCategory === category ? "bg-gradient-hero" : ""}
+              className={`px-6 py-3 ${
+                selectedCategory === category 
+                  ? "bg-primary text-white" 
+                  : "bg-white text-foreground hover:bg-muted"
+              }`}
             >
               {category}
             </Button>
@@ -137,71 +164,46 @@ const TemplatesPage = () => {
         </div>
 
         {/* Templates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {filteredTemplates.map((template) => (
-            <Card key={template.id} className="group hover:shadow-lg transition-all duration-300">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {template.name}
-                      {template.popular && (
-                        <Badge className="bg-warning/10 text-warning hover:bg-warning/20">
-                          <Star className="w-3 h-3 mr-1" />
-                          Popular
-                        </Badge>
-                      )}
-                    </CardTitle>
-                    <CardDescription className="mt-1">{template.description}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
+            <Card 
+              key={template.id} 
+              className={`group hover:shadow-xl transition-all duration-300 border-2 ${template.color} ${template.bgColor} overflow-hidden`}
+            >
+              <CardContent className="p-0">
                 {/* Template Preview */}
-                <div className="aspect-[3/4] bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-border">
-                  <div className="text-center text-muted-foreground">
-                    <Palette className="h-8 w-8 mx-auto mb-2" />
-                    <p className="text-sm">Template Preview</p>
-                  </div>
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img 
+                    src={template.preview}
+                    alt={`${template.name} template preview`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
 
                 {/* Template Info */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline">{template.category}</Badge>
-                    {template.atsOptimized && (
-                      <Badge className="bg-success/10 text-success hover:bg-success/20">
-                        ATS Optimized
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-bold text-foreground">
+                      {template.name}
+                    </h3>
+                    {template.popular && (
+                      <Badge className="bg-warning text-warning-foreground">
+                        Popular
                       </Badge>
                     )}
                   </div>
-                </div>
+                  
+                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                    {template.description}
+                  </p>
 
-                {/* Action Buttons */}
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={() => handlePreview(template.name)}
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Preview
-                  </Button>
+                  {/* Use Template Button */}
                   <Button 
                     size="sm" 
-                    className={`flex-1 ${selectedTemplate === template.id ? 'bg-success hover:bg-success/90' : 'bg-gradient-hero hover:opacity-90'}`}
+                    className="w-full bg-primary hover:bg-primary-hover text-white font-semibold"
                     onClick={() => handleUseTemplate(template.id, template.name)}
                   >
-                    {selectedTemplate === template.id ? (
-                      <>
-                        <Download className="mr-2 h-4 w-4" />
-                        Selected
-                      </>
-                    ) : (
-                      'Use Template'
-                    )}
+                    Use This Template
                   </Button>
                 </div>
               </CardContent>
@@ -209,46 +211,76 @@ const TemplatesPage = () => {
           ))}
         </div>
 
-        {/* Template Features */}
-        <Card className="mt-12">
-          <CardHeader>
-            <CardTitle>Why Our Templates Work</CardTitle>
-            <CardDescription>
-              Every template is designed with industry best practices and ATS optimization in mind
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Features Section */}
+        <Card className="border-0 bg-muted/30">
+          <CardContent className="p-12">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4 text-foreground">
+                All Templates Include
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Every template is designed with your success in mind
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Star className="h-6 w-6 text-primary" />
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-8 w-8 text-primary" />
                 </div>
-                <h4 className="font-semibold mb-2">ATS-Optimized</h4>
+                <h4 className="font-bold mb-2 text-foreground">ATS-Optimized</h4>
                 <p className="text-muted-foreground text-sm">
-                  All templates pass through Applicant Tracking Systems used by major companies
+                  All templates pass through Applicant Tracking Systems
                 </p>
               </div>
+              
               <div className="text-center">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Palette className="h-6 w-6 text-success" />
+                <div className="w-16 h-16 bg-success/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Palette className="h-8 w-8 text-success" />
                 </div>
-                <h4 className="font-semibold mb-2">Professional Design</h4>
+                <h4 className="font-bold mb-2 text-foreground">Fully Customizable</h4>
                 <p className="text-muted-foreground text-sm">
-                  Crafted by professional designers and approved by HR experts
+                  Change colors, fonts, and layouts to match your style
                 </p>
               </div>
+              
               <div className="text-center">
-                <div className="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Download className="h-6 w-6 text-warning" />
+                <div className="w-16 h-16 bg-warning/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Download className="h-8 w-8 text-warning" />
                 </div>
-                <h4 className="font-semibold mb-2">Easy Customization</h4>
+                <h4 className="font-bold mb-2 text-foreground">Multiple Formats</h4>
                 <p className="text-muted-foreground text-sm">
-                  Fully customizable layouts, colors, and sections to match your style
+                  Export as PDF, DOCX, or plain text for any application
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Smartphone className="h-8 w-8 text-purple-600" />
+                </div>
+                <h4 className="font-bold mb-2 text-foreground">Mobile-Friendly</h4>
+                <p className="text-muted-foreground text-sm">
+                  Looks great on all devices and screen sizes
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* CTA Section */}
+        <div className="text-center mt-12 py-12">
+          <h2 className="text-3xl font-bold mb-4 text-foreground">
+            Ready to Create Your Perfect Resume?
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8">
+            Choose a template and start building your professional resume today
+          </p>
+          <Link to="/resume-builder">
+            <Button size="lg" className="px-8 py-6 text-lg font-semibold bg-primary hover:bg-primary-hover">
+              Start Building Now
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
