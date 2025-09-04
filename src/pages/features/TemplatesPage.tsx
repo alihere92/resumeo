@@ -144,12 +144,13 @@ const TemplatesPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with gradient background */}
-      <header className="bg-gradient-to-r from-primary via-primary to-primary-hover text-white py-16">
-        <div className="container mx-auto px-4 lg:px-6">
+      <header className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800 text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-800/20"></div>
+        <div className="container mx-auto px-4 lg:px-6 relative z-10">
           {/* Back button */}
           <div className="mb-8">
             <Link to="/home">
-              <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+              <Button variant="ghost" size="sm" className="text-white hover:bg-white/20 backdrop-blur-sm border border-white/20">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Dashboard
               </Button>
@@ -157,12 +158,26 @@ const TemplatesPage = () => {
           </div>
           
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
               Professional Resume Templates
             </h1>
-            <p className="text-xl text-white/90 leading-relaxed">
-              Choose from our collection of ATS-friendly, modern resume templates designed to help you stand out
+            <p className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
+              Choose from our collection of ATS-friendly, modern resume templates designed to help you stand out and land your dream job
             </p>
+            <div className="mt-8 flex justify-center gap-4 text-sm text-white/80">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                <span>ATS Optimized</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                <span>Instant Download</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Palette className="w-4 h-4" />
+                <span>Fully Customizable</span>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -188,53 +203,80 @@ const TemplatesPage = () => {
         </div>
 
         {/* Templates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredTemplates.map((template) => (
             <Card 
               key={template.id} 
-              className={`group hover:shadow-xl transition-all duration-300 border-2 ${template.color} ${template.bgColor} overflow-hidden`}
+              className={`group relative hover:shadow-2xl transition-all duration-500 border ${template.color} ${template.bgColor} overflow-hidden hover:scale-[1.02] cursor-pointer`}
             >
               <CardContent className="p-0">
                 {/* Template Preview */}
-                <div className="aspect-[3/4] overflow-hidden">
+                <div className="aspect-[3/4] overflow-hidden relative">
                   <img 
                     src={template.preview}
                     alt={`${template.name} template preview`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
+                  
+                  {/* Preview overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex gap-3">
+                      <Button 
+                        size="sm" 
+                        variant="secondary"
+                        className="backdrop-blur-sm bg-white/90 hover:bg-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePreview(template.name);
+                        }}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Preview
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Template Info */}
                 <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-foreground">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-xl font-bold text-foreground leading-tight">
                       {template.name}
                     </h3>
-                     <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-1">
                        {template.popular && (
-                         <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-300">
-                           Popular
+                         <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 text-xs">
+                           ⭐ Popular
                          </Badge>
                        )}
                        {template.atsOptimized && (
-                         <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                           ATS
+                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
+                           ✓ ATS
                          </Badge>
                        )}
                      </div>
                   </div>
                   
-                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                  <p className="text-muted-foreground text-sm mb-6 leading-relaxed line-clamp-2">
                     {template.description}
                   </p>
 
                   {/* Use Template Button */}
                   <Button 
-                    size="sm" 
-                    className="w-full bg-primary hover:bg-primary-hover text-white font-semibold"
+                    size="lg" 
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                     onClick={() => handleUseTemplate(template.id, template.name)}
+                    disabled={selectedTemplate === template.id}
                   >
-                    Use This Template
+                    {selectedTemplate === template.id ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      'Use This Template'
+                    )}
                   </Button>
                 </div>
               </CardContent>
