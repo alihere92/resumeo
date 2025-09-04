@@ -18,10 +18,8 @@ import modernProfessional from "@/assets/template-modern-professional.jpg";
 import creativeDesigner from "@/assets/template-creative-designer.jpg";
 import executiveProfessional from "@/assets/template-executive-professional.jpg";
 import minimalClean from "@/assets/template-minimal-clean.jpg";
-import techSpecialist from "@/assets/template-tech-specialist.jpg";
-import healthcareProfessional from "@/assets/template-healthcare-professional.jpg";
-import salesMarketing from "@/assets/template-sales-marketing.jpg";
-import academicResearch from "@/assets/template-academic-research.jpg";
+import simpleClean from "@/assets/template-simple-clean.jpg";
+import atsFriendly from "@/assets/template-ats-friendly.jpg";
 
 interface Template {
   id: string;
@@ -43,12 +41,23 @@ const TemplatesPage = () => {
 
   const templates: Template[] = [
     {
+      id: "simple-clean",
+      name: "Simple Clean",
+      description: "Clean and straightforward design that focuses on content",
+      category: "Simple",
+      color: "border-gray-300",
+      bgColor: "bg-gray-50",
+      popular: true,
+      atsOptimized: true,
+      preview: simpleClean
+    },
+    {
       id: "modern-professional",
       name: "Modern Professional",
-      description: "Clean and modern design perfect for tech and business professionals",
+      description: "Contemporary design perfect for tech and business professionals",
       category: "Modern",
-      color: "border-primary",
-      bgColor: "bg-primary/5",
+      color: "border-blue-400",
+      bgColor: "bg-blue-50",
       popular: true,
       atsOptimized: true,
       preview: modernProfessional
@@ -60,79 +69,46 @@ const TemplatesPage = () => {
       category: "Creative", 
       color: "border-pink-400",
       bgColor: "bg-pink-50",
-      popular: false,
+      popular: true,
       atsOptimized: true,
       preview: creativeDesigner
+    },
+    {
+      id: "ats-friendly",
+      name: "ATS Optimized",
+      description: "Specifically designed to pass Applicant Tracking Systems",
+      category: "ATS",
+      color: "border-green-400",
+      bgColor: "bg-green-50",
+      popular: true,
+      atsOptimized: true,
+      preview: atsFriendly
+    },
+    {
+      id: "minimal-clean",
+      name: "Minimal Professional",
+      description: "Minimalist layout with maximum impact",
+      category: "Simple",
+      color: "border-slate-400",
+      bgColor: "bg-slate-50",
+      popular: false,
+      atsOptimized: true,
+      preview: minimalClean
     },
     {
       id: "executive-professional",
       name: "Executive Professional",
       description: "Traditional and sophisticated design for executive positions",
-      category: "Professional",
-      color: "border-gray-400",
-      bgColor: "bg-gray-50",
+      category: "Modern",
+      color: "border-gray-500",
+      bgColor: "bg-gray-100",
       popular: false,
       atsOptimized: true,
       preview: executiveProfessional
-    },
-    {
-      id: "minimal-clean",
-      name: "Minimal Clean",
-      description: "Simple and clean layout that focuses on content",
-      category: "Minimal",
-      color: "border-green-400",
-      bgColor: "bg-green-50",
-      popular: true,
-      atsOptimized: true,
-      preview: minimalClean
-    },
-    {
-      id: "tech-specialist",
-      name: "Tech Specialist",
-      description: "Modern tech-focused design with visual elements",
-      category: "Modern",
-      color: "border-blue-400",
-      bgColor: "bg-blue-50",
-      popular: false,
-      atsOptimized: true,
-      preview: techSpecialist
-    },
-    {
-      id: "healthcare-professional",
-      name: "Healthcare Professional",
-      description: "Professional design tailored for healthcare workers",
-      category: "Professional",
-      color: "border-teal-400",
-      bgColor: "bg-teal-50",
-      popular: false,
-      atsOptimized: true,
-      preview: healthcareProfessional
-    },
-    {
-      id: "sales-marketing",
-      name: "Sales & Marketing",
-      description: "Dynamic design perfect for sales and marketing roles",
-      category: "Creative",
-      color: "border-orange-400",
-      bgColor: "bg-orange-50",
-      popular: false,
-      atsOptimized: true,
-      preview: salesMarketing
-    },
-    {
-      id: "academic-research",
-      name: "Academic Research",
-      description: "Traditional format ideal for academic and research positions",
-      category: "Professional",
-      color: "border-indigo-400",
-      bgColor: "bg-indigo-50",
-      popular: false,
-      atsOptimized: true,
-      preview: academicResearch
     }
   ];
 
-  const categories = ["All Templates", "Modern", "Creative", "Professional", "Minimal"];
+  const categories = ["All Templates", "Simple", "Modern", "Creative", "ATS"];
   const [selectedCategory, setSelectedCategory] = useState("All Templates");
 
   const filteredTemplates = selectedCategory === "All Templates" 
@@ -234,11 +210,18 @@ const TemplatesPage = () => {
                     <h3 className="text-lg font-bold text-foreground">
                       {template.name}
                     </h3>
-                    {template.popular && (
-                      <Badge className="bg-warning text-warning-foreground">
-                        Popular
-                      </Badge>
-                    )}
+                     <div className="flex items-center gap-2">
+                       {template.popular && (
+                         <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                           Popular
+                         </Badge>
+                       )}
+                       {template.atsOptimized && (
+                         <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+                           ATS
+                         </Badge>
+                       )}
+                     </div>
                   </div>
                   
                   <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
