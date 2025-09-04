@@ -18,6 +18,10 @@ import modernProfessional from "@/assets/template-modern-professional.jpg";
 import creativeDesigner from "@/assets/template-creative-designer.jpg";
 import executiveProfessional from "@/assets/template-executive-professional.jpg";
 import minimalClean from "@/assets/template-minimal-clean.jpg";
+import techSpecialist from "@/assets/template-tech-specialist.jpg";
+import healthcareProfessional from "@/assets/template-healthcare-professional.jpg";
+import salesMarketing from "@/assets/template-sales-marketing.jpg";
+import academicResearch from "@/assets/template-academic-research.jpg";
 
 interface Template {
   id: string;
@@ -81,6 +85,50 @@ const TemplatesPage = () => {
       popular: true,
       atsOptimized: true,
       preview: minimalClean
+    },
+    {
+      id: "tech-specialist",
+      name: "Tech Specialist",
+      description: "Modern tech-focused design with visual elements",
+      category: "Modern",
+      color: "border-blue-400",
+      bgColor: "bg-blue-50",
+      popular: false,
+      atsOptimized: true,
+      preview: techSpecialist
+    },
+    {
+      id: "healthcare-professional",
+      name: "Healthcare Professional",
+      description: "Professional design tailored for healthcare workers",
+      category: "Professional",
+      color: "border-teal-400",
+      bgColor: "bg-teal-50",
+      popular: false,
+      atsOptimized: true,
+      preview: healthcareProfessional
+    },
+    {
+      id: "sales-marketing",
+      name: "Sales & Marketing",
+      description: "Dynamic design perfect for sales and marketing roles",
+      category: "Creative",
+      color: "border-orange-400",
+      bgColor: "bg-orange-50",
+      popular: false,
+      atsOptimized: true,
+      preview: salesMarketing
+    },
+    {
+      id: "academic-research",
+      name: "Academic Research",
+      description: "Traditional format ideal for academic and research positions",
+      category: "Professional",
+      color: "border-indigo-400",
+      bgColor: "bg-indigo-50",
+      popular: false,
+      atsOptimized: true,
+      preview: academicResearch
     }
   ];
 
